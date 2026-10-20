@@ -1,5 +1,123 @@
 # Changelog
 
+## [6.8.0](https://github.com/wukongtime/rea-backup/compare/rea-agents-6.7.0...rea-agents-6.8.0) (2026-10-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **reference:** Partial reference-source reader results report failed root enumeration in rootFailure instead of a failed directory child at path ".". Historical source graphs preserve the root failure as a top-level limitation.
+* **process:** Filesystem enumeration omission reasons now also include entry_unavailable and identity_changed. Clients validating the old literal reason must accept the expanded capture schema.
+* **apktool:** Numeric legacy locale selectors such as es-r419 are rejected. Use es-419 or b+es+419. Two-letter region selectors remain supported.
+* **plist:** Unresolved XML scalar values now use $plist_type unknown wrappers with element, literal and reason. This replaces the former real/null unknown marker and malformed scalar prefix fallback. Supported extended UTC years now preserve their timestamp.
+
+### Features
+
+* **analysis-view:** project an environment manifest from web network captures ([#4954](https://github.com/wukongtime/rea-backup/issues/4954)) ([291059a](https://github.com/wukongtime/rea-backup/commit/291059adb4dabc768f91d9da0ba93007d7ab6822))
+* **artifacts:** inspect and extract Godot PCK with retained facts ([#3634](https://github.com/wukongtime/rea-backup/issues/3634)) ([5fa4def](https://github.com/wukongtime/rea-backup/commit/5fa4defcbc0e55ef1ec84c888b918abe945303fe))
+* **artifacts:** triage desktop installation directories ([#5207](https://github.com/wukongtime/rea-backup/issues/5207)) ([b4938ae](https://github.com/wukongtime/rea-backup/commit/b4938aed58737293a6987630476632619713f5cd))
+* **environment:** build environments from browser scenario captures ([#5182](https://github.com/wukongtime/rea-backup/issues/5182)) ([bf1eeee](https://github.com/wukongtime/rea-backup/commit/bf1eeee94fd4677c793243a96542543b46c7c78e))
+* **environment:** export an environment manifest as an agent environment bundle ([#4999](https://github.com/wukongtime/rea-backup/issues/4999)) ([7a0c47b](https://github.com/wukongtime/rea-backup/commit/7a0c47bfa4259af859779000bf8bc8aaf16b35bd))
+* **environment:** serve an environment manifest as a replay environment ([#4975](https://github.com/wukongtime/rea-backup/issues/4975)) ([10f1994](https://github.com/wukongtime/rea-backup/commit/10f1994fe1a0bbddeb846ee8078a80a483a652f1))
+* **il2cpp:** inventory Unity IL2CPP global-metadata images, types and methods ([#3807](https://github.com/wukongtime/rea-backup/issues/3807)) ([8331365](https://github.com/wukongtime/rea-backup/commit/833136507dd79d959340b09862a53af344e4f1b3))
+* **mcp:** add opt-in streamable HTTP transport ([#4955](https://github.com/wukongtime/rea-backup/issues/4955)) ([60bd646](https://github.com/wukongtime/rea-backup/commit/60bd646478dcfab6c296b7e4765254eea787ffa9))
+* **objdump:** select native disassembly by symbol ([#5171](https://github.com/wukongtime/rea-backup/issues/5171)) ([3ea0d94](https://github.com/wukongtime/rea-backup/commit/3ea0d9489e52500ed76555926f1b78419f71c3cb)), closes [#5159](https://github.com/wukongtime/rea-backup/issues/5159)
+
+
+### Bug Fixes
+
+* **adb:** preserve command failure target identities ([8307ea3](https://github.com/wukongtime/rea-backup/commit/8307ea3717b9bbc6b5cf83d96a0f73d47708e586)), closes [#4641](https://github.com/wukongtime/rea-backup/issues/4641) [#4643](https://github.com/wukongtime/rea-backup/issues/4643) [#5051](https://github.com/wukongtime/rea-backup/issues/5051)
+* **analysis:** preserve input diagnostics and reuse JEB contracts ([a0edd14](https://github.com/wukongtime/rea-backup/commit/a0edd145d31ffeb9f022c25ec9e9131083f563d5))
+* **apktool:** select numeric regions using Android b+ qualifiers ([29910d1](https://github.com/wukongtime/rea-backup/commit/29910d16b98fe4b607a7aa15928789a73614b0b9))
+* **artifacts:** share bounded ASAR signature observations ([e8da7e1](https://github.com/wukongtime/rea-backup/commit/e8da7e1edd075feec0e6beedec93d5645fed8125)), closes [#3574](https://github.com/wukongtime/rea-backup/issues/3574) [#5188](https://github.com/wukongtime/rea-backup/issues/5188)
+* **browser:** isolate web bundle analysis with bounded partial results ([9aca543](https://github.com/wukongtime/rea-backup/commit/9aca543f46085f502dbc5445002e129e5d2974e9))
+* **browser:** preserve caller cancellation through CDP observations ([7f4e7d5](https://github.com/wukongtime/rea-backup/commit/7f4e7d5577adf2f4ea6edf869cbb35a43469b8d3))
+* **browser:** retain historical capture outcomes through cleanup ([2e5171e](https://github.com/wukongtime/rea-backup/commit/2e5171e391b83f8a467d0861fd452c1f78621fd8))
+* **browser:** validate large base64 without regexp stack overflow ([49b4edf](https://github.com/wukongtime/rea-backup/commit/49b4edfe7788495ba548e423c9c3b82dc14cca03)), closes [#5253](https://github.com/wukongtime/rea-backup/issues/5253)
+* **ci:** correlate ownership trace threads and preserve setup failures ([aacf740](https://github.com/wukongtime/rea-backup/commit/aacf740a047078e79c71d528e8e188afe2ba1aff))
+* **ci:** repair capture ownership and portable ABI validation ([#5224](https://github.com/wukongtime/rea-backup/issues/5224)) ([b999e72](https://github.com/wukongtime/rea-backup/commit/b999e724767587bc5a2f0589579e0f836774b0e3))
+* **ci:** validate unindexed readiness heads with live PR metadata ([#5316](https://github.com/wukongtime/rea-backup/issues/5316)) ([82c76e2](https://github.com/wukongtime/rea-backup/commit/82c76e2cbab28ef33a194b995e146bdea8f14001))
+* **domain:** preserve partial reference comparison facts ([92dadf9](https://github.com/wukongtime/rea-backup/commit/92dadf93344296516b960487d2f49c0f67e246fa)), closes [#4210](https://github.com/wukongtime/rea-backup/issues/4210) [#5131](https://github.com/wukongtime/rea-backup/issues/5131)
+* **electron:** preserve callback ownership through listener removal ([dfe8378](https://github.com/wukongtime/rea-backup/commit/dfe8378cf5a727e3d93d47a5986233175c6ef898)), closes [#4513](https://github.com/wukongtime/rea-backup/issues/4513)
+* **errors:** retain secondary failures without replacing primary causes ([d4e2339](https://github.com/wukongtime/rea-backup/commit/d4e233946a39574e36a0d927b13eb77528ad5dc5)), closes [#5059](https://github.com/wukongtime/rea-backup/issues/5059)
+* **flutter:** select reported ABI labels through shared contracts ([64abd4a](https://github.com/wukongtime/rea-backup/commit/64abd4aefb23317dd4f787094456d1b19de47c77))
+* **frida:** clarify device selection and cleanup contracts ([2ec602b](https://github.com/wukongtime/rea-backup/commit/2ec602b191d3b36dd17733e3e183457c57651c60))
+* **frida:** preserve resume failures across caller cancellation ([69aa546](https://github.com/wukongtime/rea-backup/commit/69aa5465cd77c5cf9ff435e7a5a322d90c1db12c))
+* **frida:** preserve script evidence through cancellation and decoding ([048d707](https://github.com/wukongtime/rea-backup/commit/048d70755ea9ca1d0d159ac78285d62a7ae00b21)), closes [#3979](https://github.com/wukongtime/rea-backup/issues/3979) [#3396](https://github.com/wukongtime/rea-backup/issues/3396)
+* **frida:** retain cancellation through final session cleanup ([44b6ec9](https://github.com/wukongtime/rea-backup/commit/44b6ec97ee65dba280e0d177545bcd63881287fd))
+* **frida:** separate attachment from target resume observations ([69fe86c](https://github.com/wukongtime/rea-backup/commit/69fe86c5c7c31082d1846842b3afd00343499d75))
+* **frida:** share canonical discovery results across adapters ([4cbcead](https://github.com/wukongtime/rea-backup/commit/4cbcead46cb16b18c9467498e5b4a6778e4b7aa0)), closes [#4637](https://github.com/wukongtime/rea-backup/issues/4637)
+* **frida:** share exact JSON string byte accounting ([435efe7](https://github.com/wukongtime/rea-backup/commit/435efe7afcc6a286a9b450dbef682df67252ebf5)), closes [#5097](https://github.com/wukongtime/rea-backup/issues/5097)
+* **ghidra:** own operation-scoped JVM failure evidence ([91884c3](https://github.com/wukongtime/rea-backup/commit/91884c374385182726a93d56059720d5e78a0e42)), closes [#4682](https://github.com/wukongtime/rea-backup/issues/4682) [#5220](https://github.com/wukongtime/rea-backup/issues/5220)
+* **hopper:** verify and repair the Linux embedding runtime ([#5041](https://github.com/wukongtime/rea-backup/issues/5041)) ([b0b485a](https://github.com/wukongtime/rea-backup/commit/b0b485abff802b79d238dd24a9fa4abd0713d3ee))
+* **investigation:** scope automatic unknowns to result Evidence ([95c8f57](https://github.com/wukongtime/rea-backup/commit/95c8f57aa2eafab4c8d7d43482b33ceefaf96b16)), closes [#3333](https://github.com/wukongtime/rea-backup/issues/3333)
+* **javascript:** converge cyclic aliases with explicit projection widening ([e4c3d72](https://github.com/wukongtime/rea-backup/commit/e4c3d72396bf925a45724ce8b18b238b0d23d787)), closes [#4348](https://github.com/wukongtime/rea-backup/issues/4348) [#5138](https://github.com/wukongtime/rea-backup/issues/5138) [#4349](https://github.com/wukongtime/rea-backup/issues/4349) [#4364](https://github.com/wukongtime/rea-backup/issues/4364)
+* **javascript:** retain selected application paths in Evidence ([c4aaf81](https://github.com/wukongtime/rea-backup/commit/c4aaf813e05a503b79b059ee9f6933701117f915)), closes [#5258](https://github.com/wukongtime/rea-backup/issues/5258)
+* **mcp:** derive shared provider cleanup from loaded ports ([00dd959](https://github.com/wukongtime/rea-backup/commit/00dd959b82bb6675e01f54ade1180e345c826fee)), closes [#5222](https://github.com/wukongtime/rea-backup/issues/5222)
+* **mcp:** preserve procedure aliases and complete name ambiguity ([d3627b1](https://github.com/wukongtime/rea-backup/commit/d3627b10382b0f28b12cad1543634e165470b29a)), closes [#4623](https://github.com/wukongtime/rea-backup/issues/4623)
+* **native:** bound LLDB PID reads before validation ([292e7be](https://github.com/wukongtime/rea-backup/commit/292e7bef27c983853841894f56984a6566319972)), closes [#5057](https://github.com/wukongtime/rea-backup/issues/5057)
+* **native:** preserve partial call reference evidence ([a80575c](https://github.com/wukongtime/rea-backup/commit/a80575c73652d8b43d7340654a48bd20a4eb966d)), closes [#5130](https://github.com/wukongtime/rea-backup/issues/5130)
+* **native:** retain LLDB evidence prefixes after read failures ([eb2c3b5](https://github.com/wukongtime/rea-backup/commit/eb2c3b589eeb2884761b30d5b0402aa2d9337b49)), closes [#5058](https://github.com/wukongtime/rea-backup/issues/5058)
+* **native:** retain partial call routes and omitted sites ([6588435](https://github.com/wukongtime/rea-backup/commit/65884350ff3373f2adc7337c1945eeb54334693f)), closes [#5073](https://github.com/wukongtime/rea-backup/issues/5073) [#3922](https://github.com/wukongtime/rea-backup/issues/3922) [#5128](https://github.com/wukongtime/rea-backup/issues/5128)
+* **native:** retain signature roots until descriptor cleanup completes ([9e259f8](https://github.com/wukongtime/rea-backup/commit/9e259f87c8be3d22a0b96f12ed7838830869c987)), closes [#5052](https://github.com/wukongtime/rea-backup/issues/5052)
+* **native:** retain UI interruption source through final cleanup ([36d156f](https://github.com/wukongtime/rea-backup/commit/36d156ff05f48f9f0b4c4abb8f7c899249a49ebf)), closes [#5056](https://github.com/wukongtime/rea-backup/issues/5056)
+* **native:** scan byte-pattern inputs without regexp stack growth ([255d906](https://github.com/wukongtime/rea-backup/commit/255d906e15a141b0f4acee60dc73976f03adc94c)), closes [#5257](https://github.com/wukongtime/rea-backup/issues/5257)
+* **native:** validate LLDB readback encoding before reporting facts ([7201e8a](https://github.com/wukongtime/rea-backup/commit/7201e8a4439b3ece4a5470014525ea2e13e4c183)), closes [#5055](https://github.com/wukongtime/rea-backup/issues/5055)
+* **plist:** ignore processing instructions between container members ([fd728f2](https://github.com/wukongtime/rea-backup/commit/fd728f271e7de7bcfa63890b573715720d5f948c)), closes [#4964](https://github.com/wukongtime/rea-backup/issues/4964)
+* **plist:** preserve source semantics in XML data decoding ([cee95b2](https://github.com/wukongtime/rea-backup/commit/cee95b2ae6a19122de95103b2d23bc6f8c9c4428)), closes [#4978](https://github.com/wukongtime/rea-backup/issues/4978)
+* **plist:** preserve unknown XML scalar identities ([3537e58](https://github.com/wukongtime/rea-backup/commit/3537e58c1ab29309f06eabf50bc52adba9817a0c)), closes [#4852](https://github.com/wukongtime/rea-backup/issues/4852)
+* **process:** await owned observation commands through finalization ([ca71e91](https://github.com/wukongtime/rea-backup/commit/ca71e91d23672646af917ede8ae82c7fea395341)), closes [#5199](https://github.com/wukongtime/rea-backup/issues/5199) [#5202](https://github.com/wukongtime/rea-backup/issues/5202)
+* **process:** gate launch and retain cancellation provenance ([d6ca7b3](https://github.com/wukongtime/rea-backup/commit/d6ca7b3f20a273823c50d6253f0b6f34f3876f53)), closes [#4512](https://github.com/wukongtime/rea-backup/issues/4512) [#5142](https://github.com/wukongtime/rea-backup/issues/5142)
+* **process:** keep lifecycle waits independent of application timers ([5199c67](https://github.com/wukongtime/rea-backup/commit/5199c672ff2ea0d104dd569dad7d79e8dc9b9595)), closes [#5267](https://github.com/wukongtime/rea-backup/issues/5267)
+* **process:** preserve cancellation through liveness rechecks ([3927542](https://github.com/wukongtime/rea-backup/commit/39275420ea18ad803eccfcc2702865b98ed36e44)), closes [#5205](https://github.com/wukongtime/rea-backup/issues/5205)
+* **process:** preserve cleanup ownership through retries and close ([974487f](https://github.com/wukongtime/rea-backup/commit/974487f00f2d68912c7c2c9e033a2760a343a82e)), closes [#5144](https://github.com/wukongtime/rea-backup/issues/5144) [#5163](https://github.com/wukongtime/rea-backup/issues/5163) [#5166](https://github.com/wukongtime/rea-backup/issues/5166)
+* **process:** preserve partial sampling observations and shutdown gaps ([ba866a2](https://github.com/wukongtime/rea-backup/commit/ba866a26ecbe179a717e746cbc0d1605ae616ad5)), closes [#5081](https://github.com/wukongtime/rea-backup/issues/5081) [#5194](https://github.com/wukongtime/rea-backup/issues/5194)
+* **process:** reconcile native lifetime and selective Linux UID facts ([4af71a4](https://github.com/wukongtime/rea-backup/commit/4af71a45f9c740b292b0b454ba11bcc0494874b8))
+* **process:** retain child scope and bound native exit waits ([#5280](https://github.com/wukongtime/rea-backup/issues/5280)) ([71ae02c](https://github.com/wukongtime/rea-backup/commit/71ae02c6efceb6b59e703c0c4e7367d7ea8c6c03))
+* **process:** retain native ownership evidence through cleanup ([49e67aa](https://github.com/wukongtime/rea-backup/commit/49e67aa1d963bda337c261f4813ecb7128e2a50c)), closes [#5238](https://github.com/wukongtime/rea-backup/issues/5238)
+* **process:** retain partial filesystem snapshot observations ([c85b44e](https://github.com/wukongtime/rea-backup/commit/c85b44e1b14851c54e65327a4807f79ad5cd5a61))
+* **process:** retain snapshot handles and partial read outcomes ([9af0b61](https://github.com/wukongtime/rea-backup/commit/9af0b6113c81803f88ec7d242e8fabaaa5d7f1f3))
+* **process:** settle native exit and repair ownership verification ([#5249](https://github.com/wukongtime/rea-backup/issues/5249)) ([1c2c2f1](https://github.com/wukongtime/rea-backup/commit/1c2c2f1e78a74cdf5e4909ab8e775b090998a51f))
+* **reference:** preserve symlink races and root failure facts ([6296fdf](https://github.com/wukongtime/rea-backup/commit/6296fdf560f1ac4aa55985558edaa98300aacdbc))
+* **rizin:** accept proven inferior exit after detach ([#5281](https://github.com/wukongtime/rea-backup/issues/5281)) ([e84e17e](https://github.com/wukongtime/rea-backup/commit/e84e17e30f7de41ad9ac801eda235574fa5d4dad)), closes [#5277](https://github.com/wukongtime/rea-backup/issues/5277)
+* **rizin:** bound recent history frames by UTF-8 byte budget ([#5246](https://github.com/wukongtime/rea-backup/issues/5246)) ([1b3ac94](https://github.com/wukongtime/rea-backup/commit/1b3ac94242882e0fbf9c717806646c729abd8b91)), closes [#5091](https://github.com/wukongtime/rea-backup/issues/5091) [#5242](https://github.com/wukongtime/rea-backup/issues/5242)
+* **rizin:** default one-shot output to plain presentation ([#5269](https://github.com/wukongtime/rea-backup/issues/5269)) ([2dd5eff](https://github.com/wukongtime/rea-backup/commit/2dd5effe2a641e354ad273138d0906a759fab9c3)), closes [#4488](https://github.com/wukongtime/rea-backup/issues/4488)
+* **rizin:** keep protocol failures outside exit recovery ([#5290](https://github.com/wukongtime/rea-backup/issues/5290)) ([909b9f7](https://github.com/wukongtime/rea-backup/commit/909b9f7b6be3fdaab9b7ccb401f48baa524c4312)), closes [#5282](https://github.com/wukongtime/rea-backup/issues/5282)
+* **runtime:** retain Inspector and Electron cleanup ownership ([87ab054](https://github.com/wukongtime/rea-backup/commit/87ab054ea384b3fcbae2998b1f94685edcd5f624))
+* **schema:** compose portable stack-safe base64 constraints ([0949313](https://github.com/wukongtime/rea-backup/commit/0949313d8fa222dfd48d33828e19924d55775981))
+* **session:** admit direct native dispatch metadata providers ([50b6975](https://github.com/wukongtime/rea-backup/commit/50b6975d861069e2c6cfa202780621449f863802)), closes [#5070](https://github.com/wukongtime/rea-backup/issues/5070)
+* **session:** align call relationship discovery with traversal modes ([1d5bf5f](https://github.com/wukongtime/rea-backup/commit/1d5bf5ff084b49c1c630a312520c59d6b08c6ade)), closes [#4687](https://github.com/wukongtime/rea-backup/issues/4687) [#5068](https://github.com/wukongtime/rea-backup/issues/5068)
+* **session:** describe native UI trace source routes ([32f0e51](https://github.com/wukongtime/rea-backup/commit/32f0e5120966be59d17a1e092353816c76a9c5e2)), closes [#5071](https://github.com/wukongtime/rea-backup/issues/5071)
+* **setup:** treat empty APPDATA as unset for VS Code, Trae and Devin ([#5126](https://github.com/wukongtime/rea-backup/issues/5126)) ([273bb66](https://github.com/wukongtime/rea-backup/commit/273bb662763406662b4c061887397e9e5f27aa4d))
+* **tests:** complete independent agent evaluation cleanup ([0fc8462](https://github.com/wukongtime/rea-backup/commit/0fc8462be15b55d828b276861853b5491bff1646)), closes [#5095](https://github.com/wukongtime/rea-backup/issues/5095)
+* **tests:** preserve temporary fixture ownership ([093ce69](https://github.com/wukongtime/rea-backup/commit/093ce695f0a7c3407c7fde520ed8b20c0981b408))
+* **tests:** restore Android prerequisite verification ([23f984b](https://github.com/wukongtime/rea-backup/commit/23f984b1a884baefc3c44e4ab697f6eff61dffb6))
+* **uninstall:** preflight repeated registration ownership ([22ddd82](https://github.com/wukongtime/rea-backup/commit/22ddd820143b0ce455756b24acf60ed251286622)), closes [#4976](https://github.com/wukongtime/rea-backup/issues/4976)
+* **uninstall:** retain per-file partial outcomes ([559af3d](https://github.com/wukongtime/rea-backup/commit/559af3d3ff4b0236d468e80788c82d5a85b102da)), closes [#5079](https://github.com/wukongtime/rea-backup/issues/5079)
+
+
+### Performance Improvements
+
+* **hopper:** reuse decoded records for literal string matches ([#5017](https://github.com/wukongtime/rea-backup/issues/5017)) ([63c9708](https://github.com/wukongtime/rea-backup/commit/63c970812b8b5c6664400c9360e22c427844820c))
+
+
+### Code Refactoring
+
+* **process:** share ownership for isolated analysis workers ([715d93e](https://github.com/wukongtime/rea-backup/commit/715d93e954f238e009d9a425b6c430ce131eb51b))
+
+
+### Documentation
+
+* **jeb:** qualify Linux CE native workflows ([#5002](https://github.com/wukongtime/rea-backup/issues/5002)) ([c12d9ed](https://github.com/wukongtime/rea-backup/commit/c12d9eda87aa5a022ee7e18ea96d8d03bfd12e96)), closes [#4996](https://github.com/wukongtime/rea-backup/issues/4996)
+* **manifest:** align plan with top-level body parsing ([fdaffe2](https://github.com/wukongtime/rea-backup/commit/fdaffe21cc03ed9a46c69ba057b1d89947b72b83))
+
+
+### Tests
+
+* **contracts:** align plist and UI finalization regressions ([d1adc60](https://github.com/wukongtime/rea-backup/commit/d1adc607952472b6db87d1fe5af4ba241f759f6e))
+* **javascript:** distinguish selected paths from artifact identity ([b44cb5b](https://github.com/wukongtime/rea-backup/commit/b44cb5bd306de5b20466cf7b35f56247492dd41d))
+* **process:** distinguish native preparation from capture allocation ([dc936f4](https://github.com/wukongtime/rea-backup/commit/dc936f433cf305ec9dbf9df70842303f89fab03f))
+* **setup:** isolate registration checks from installed providers ([0e62094](https://github.com/wukongtime/rea-backup/commit/0e62094b69b4b36c8855a8255558b4a9f65fdb95))
+
 ## [6.7.0](https://github.com/morluto/rea/compare/rea-agents-6.6.0...rea-agents-6.7.0) (2026-10-18)
 
 ### Highlights
