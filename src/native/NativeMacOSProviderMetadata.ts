@@ -4,6 +4,7 @@ import type {
 } from "../application/AnalysisProvider.js";
 import { createAnalysisProfile } from "../domain/analysisProfile.js";
 import { NATIVE_TOOL_CONTRACTS } from "../contracts/native/nativeToolContracts.js";
+import { APPLE_DISPATCH_TARGET_APPLICABILITY } from "../domain/native/objcSwiftMetadata.js";
 
 /** Public identity committed by macOS-native inspection observations. */
 export const NATIVE_MACOS_PROVIDER_IDENTITY: ProviderIdentity = Object.freeze({
@@ -51,7 +52,10 @@ export const nativeMacOSCapabilities = (
         provider: NATIVE_MACOS_PROVIDER_IDENTITY,
         operation: contract.name,
         ...(contract.name === "inspect_native_dispatch_metadata"
-          ? { analysisProfile: APPLE_DISPATCH_METADATA_ANALYSIS_PROFILE }
+          ? {
+              analysisProfile: APPLE_DISPATCH_METADATA_ANALYSIS_PROFILE,
+              targetApplicability: APPLE_DISPATCH_TARGET_APPLICABILITY,
+            }
           : {}),
         ...availability,
         effects: Object.freeze({
