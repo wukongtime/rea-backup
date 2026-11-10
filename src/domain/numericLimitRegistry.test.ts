@@ -21,16 +21,10 @@ it("gives every numeric exception a reason and a matching inventory row", () => 
   );
   for (const entry of NUMERIC_LIMIT_REGISTRY) {
     expect(entry.reason.trim().length).toBeGreaterThanOrEqual(40);
-    expect(entry.read).toBe(
-      entry.policy === "per-call" ? "per-call" : "startup",
-    );
+    expect(entry.policy).toBe("restart-only");
+    expect(entry.read).toBe("startup");
     expect(runtimeEnvironments.has(entry.name)).toBe(false);
     expect(inventory).toContain(`\`${entry.name}\``);
   }
-  expect(
-    NUMERIC_LIMIT_REGISTRY.filter((entry) => entry.policy === "restart-only"),
-  ).toHaveLength(15);
-  expect(
-    NUMERIC_LIMIT_REGISTRY.filter((entry) => entry.policy === "per-call"),
-  ).toHaveLength(11);
+  expect(NUMERIC_LIMIT_REGISTRY).toHaveLength(15);
 });

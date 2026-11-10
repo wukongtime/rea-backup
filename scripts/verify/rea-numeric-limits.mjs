@@ -3,10 +3,10 @@ import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Every numeric REA_ limit under src must be an analysis setting or a
-// documented exception with a reason. restart-only is durable. per-call is a
-// launch-captured limit whose runtime migration deletes the registry entry.
-// The three limits moving on #9868, #9865, and #9836 are not in this tree;
-// once their names appear here they must join ANALYSIS_SETTINGS.
+// restart-only exception with a reason. A per-call limit belongs in
+// ANALYSIS_SETTINGS. The three limits moving on #9868, #9865, and #9836 are
+// not in this tree; once their names appear here they must join
+// ANALYSIS_SETTINGS.
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const definitionsPath = join(root, "src/domain/analysisSettingDefinitions.ts");
@@ -44,9 +44,13 @@ const failures = [];
 const definitions = await readFile(definitionsPath, "utf8");
 const registry = await readFile(registryPath, "utf8");
 const runtime = namesIn(definitions, /environment:\s*"(REA_[A-Z0-9_]+)"/gu);
+if (registry.includes('policy: "per-call"'))
+  failures.push(
+    "per-call limits belong in ANALYSIS_SETTINGS, not numericLimitRegistry.ts",
+  );
 const entries = [
   ...registry.matchAll(
-    /name:\s*"(REA_[A-Z0-9_]+)"\s*,\s*policy:\s*"(restart-only|per-call)"\s*,\s*read:\s*"(startup|per-call)"\s*,\s*reason:\s*"((?:\\.|[^"\\])*)"/gu,
+    /name:\s*"(REA_[A-Z0-9_]+)"\s*,\s*policy:\s*"(restart-only)"\s*,\s*read:\s*"(startup)"\s*,\s*reason:\s*"((?:\\.|[^"\\])*)"/gu,
   ),
 ];
 const listed = new Map();
@@ -60,9 +64,7 @@ for (const match of entries) {
     failures.push(
       `${name} is both a runtime setting and on the exception list`,
     );
-  if (policy === "per-call" && read !== "per-call")
-    failures.push(`${name} is per-call policy but is not read per call`);
-  if (policy === "restart-only" && read !== "startup")
+  if (read !== "startup")
     failures.push(`${name} is restart-only but is not read at startup`);
 }
 
@@ -95,5 +97,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 console.log(
-  `Numeric REA_ limits: ${runtime.size} runtime, ${[...listed.values()].filter((entry) => entry.policy === "restart-only").length} restart-only, ${[...listed.values()].filter((entry) => entry.policy === "per-call").length} per-call pending migration, ${discovered.size} discovered.`,
+  `Numeric REA_ limits: ${runtime.size} runtime, ${listed.size} restart-only, ${discovered.size} discovered.`,
 );

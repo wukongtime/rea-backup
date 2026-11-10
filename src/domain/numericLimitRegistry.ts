@@ -3,42 +3,22 @@
  *
  * The static check in `scripts/verify/rea-numeric-limits.mjs` fails when a
  * numeric `REA_` limit in `src` is absent from both this list and
- * `ANALYSIS_SETTINGS`. `restart-only` is the durable exception. `per-call`
- * names a limit still read from the launch environment on each use; the
- * runtime migration deletes that entry instead of leaving it here.
+ * `ANALYSIS_SETTINGS`. Every remaining entry is restart-only: it shapes the
+ * MCP server, a worker or pool created at startup, or a helper that reads the
+ * launch environment. A limit checked on each call belongs in
+ * `ANALYSIS_SETTINGS` instead of this list.
  *
  * Narrative bounds, owners, and the non-numeric settings live in
  * `docs/design/rea-limit-inventory.md`.
  */
 export interface NumericLimitRegistryEntry {
   readonly name: string;
-  readonly policy: "restart-only" | "per-call";
-  readonly read: "startup" | "per-call";
+  readonly policy: "restart-only";
+  readonly read: "startup";
   readonly reason: string;
 }
 
 export const NUMERIC_LIMIT_REGISTRY = [
-  {
-    name: "REA_BRIDGE_MAX_REQUEST_BYTES",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "The Hopper, Ghidra, and Cutter clients measure each request against this ceiling. The value is still taken from the launch environment, so a running process does not see a new value until the runtime migration removes this entry.",
-  },
-  {
-    name: "REA_DEBUGGER_COMMAND_DEADLINE_MS",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "GDB and Rizin apply this deadline to each debugger command. The session manager currently copies it at construction from the launch environment; the runtime migration reads the accepted operation snapshot instead.",
-  },
-  {
-    name: "REA_DEBUGGER_MAX_COMMAND_OUTPUT_BYTES",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Each debugger command retains output up to this ceiling. The session manager currently copies it at construction from the launch environment; the runtime migration reads the accepted operation snapshot instead.",
-  },
   {
     name: "REA_DEBUGGER_MAX_PENDING_COMMANDS",
     policy: "restart-only",
@@ -52,13 +32,6 @@ export const NUMERIC_LIMIT_REGISTRY = [
     read: "startup",
     reason:
       "Caps how many debugger sessions the session manager created at startup will admit. Changing the pool size of a manager that already exists requires a new REA process.",
-  },
-  {
-    name: "REA_HOPPER_CALLER_SCAN_BUDGET_MS",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Forward caller reconciliation reads this budget for each scan. It is still resolved from the launch environment; the runtime migration reads the accepted operation snapshot.",
   },
   {
     name: "REA_HOPPER_DEMO_DIALOG_TIMEOUT_MS",
@@ -82,13 +55,6 @@ export const NUMERIC_LIMIT_REGISTRY = [
       "Passed to the JVM as -Xmx when the JADX worker process starts. A running JVM does not adopt a new heap size.",
   },
   {
-    name: "REA_JEB_MCP_TIMEOUT_MS",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Bounds each JEB tools/call and catalog discovery. The connection currently captures the launch value when it is created; the runtime migration reads the accepted snapshot for each request.",
-  },
-  {
     name: "REA_KUNA_CACHE_MAX_BYTES",
     policy: "restart-only",
     read: "startup",
@@ -101,20 +67,6 @@ export const NUMERIC_LIMIT_REGISTRY = [
     read: "startup",
     reason:
       "Selects the Kuna worker-pool width when the provider builds its run slots. The pool is not resized for a process that is already running.",
-  },
-  {
-    name: "REA_KUNA_PROJECT_TIMEOUT_MS",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Bounds a Kuna project export and the whole-program scans that use that deadline. The configuration object still comes from the launch environment; the runtime migration reads the accepted snapshot at each use.",
-  },
-  {
-    name: "REA_KUNA_TIMEOUT_MS",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Bounds one Kuna function decompile. The configuration object still comes from the launch environment; the runtime migration reads the accepted snapshot at each use.",
   },
   {
     name: "REA_MCP_DOCTOR_DEADLINE_MS",
@@ -159,13 +111,6 @@ export const NUMERIC_LIMIT_REGISTRY = [
       "Bounds the MCP tools/list phase while the server is starting. It shapes server startup, not a later analysis call.",
   },
   {
-    name: "REA_PWNTOOLS_MAX_INPUT_BYTES",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Default artifact-size admission for a pwntools decode. A per-call producer_limits.input_bytes override already exists; the launch default is still read from the environment and the runtime migration moves that default into the snapshot.",
-  },
-  {
     name: "REA_RECONNECT_TIMEOUT_SECONDS",
     policy: "restart-only",
     read: "startup",
@@ -178,26 +123,5 @@ export const NUMERIC_LIMIT_REGISTRY = [
     read: "startup",
     reason:
       "Captured when the Darwin ownership-helper reader is constructed at process start. That helper compile uses the captured deadline, so a later value needs a new REA process.",
-  },
-  {
-    name: "REA_WINDOWS_CHANGE_TIME_DRIFT_MS",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Each Windows ChangeTime observation compares the file against this drift window. The observation still parses the launch environment; the runtime migration reads the accepted operation snapshot.",
-  },
-  {
-    name: "REA_WINDOWS_CHANGE_TIME_SETTLE_MAX_POLLS",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Each Windows ChangeTime settle loop stops after this many polls. The observation still parses the launch environment; the runtime migration reads the accepted operation snapshot.",
-  },
-  {
-    name: "REA_WINDOWS_CHANGE_TIME_SETTLE_POLL_MS",
-    policy: "per-call",
-    read: "per-call",
-    reason:
-      "Each Windows ChangeTime settle loop waits this long between reads. The observation still parses the launch environment; the runtime migration reads the accepted operation snapshot.",
   },
 ] as const satisfies readonly NumericLimitRegistryEntry[];

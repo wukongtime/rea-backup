@@ -34,8 +34,8 @@ settings. They are not on the restart-only list.
 
 | Category                                                              |                                                                        Count |
 | --------------------------------------------------------------------- | ---------------------------------------------------------------------------: |
-| Runtime analysis settings                                             |                  17 (14 have an `REA_` seed; 3 are per-call parameters only) |
-| Per-call numeric `REA_` limits still read from the launch environment |                                                                           11 |
+| Runtime analysis settings                                             |                  28 (25 have an `REA_` seed; 3 are per-call parameters only) |
+| Per-call numeric `REA_` limits still read from the launch environment |                                                                            0 |
 | Restart-only numeric `REA_` limits                                    |                                                                           15 |
 | Numeric `REA_` names discovered in `src`                              |                                                                           40 |
 | Non-numeric `REA_` settings kept restart-only                         | 53 caller settings, plus process-protocol names that are not caller settings |
@@ -73,26 +73,26 @@ An out-of-range `update_analysis_settings` value is rejected by the setting's
 schema. Invalid launch seeds that the global environment parser accepts as
 provider-local stay inspectable with `source: "invalid"`.
 
-## Per-call limits still outside the runtime system
+## Per-call limits in the runtime system
 
-These are checked when the work runs. They keep the `REA_` variable, default,
-floor, and maximum, and the migration reads the accepted snapshot instead of a
-value copied at process start. Until that lands they are `policy: "per-call"` in
-the registry so the static check still requires a reason.
+These are checked when the work runs. Each keeps its `REA_` seed, default,
+floor, and maximum. The accepted operation snapshot supplies the value.
+`effect` is `immediate`. An update outside the range is rejected. A hit names
+the setting and reports the current value, source, and range.
 
-| Environment                                | Owner                                       |                 Default | Floor |    Maximum | Read today                                                                            | Restart field                                                                 |
-| ------------------------------------------ | ------------------------------------------- | ----------------------: | ----: | ---------: | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `REA_BRIDGE_MAX_REQUEST_BYTES`             | `src/config/bridgeMaxRequestBytes.ts`       |                16777216 |  7464 |  536870887 | each bridge request, from the launch value                                            | prose                                                                         |
-| `REA_DEBUGGER_COMMAND_DEADLINE_MS`         | `src/domain/analysisResourceLimits.ts`      |                  120000 |     1 | 2147483647 | copied when the debugger manager is constructed; applied to each command              | `effect: "next_process"` (`restart_required: true`)                           |
-| `REA_DEBUGGER_MAX_COMMAND_OUTPUT_BYTES`    | `src/domain/analysisResourceLimits.ts`      |                16777216 |     1 |   89303718 | copied when the debugger manager is constructed; applied to each command              | `effect: "next_process"` (`restart_required: true`)                           |
-| `REA_HOPPER_CALLER_SCAN_BUDGET_MS`         | `src/domain/analysisResourceLimits.ts`      |                    2000 |     1 | 2147483647 | each caller-scan operation, from config resolved at launch                            | prose                                                                         |
-| `REA_JEB_MCP_TIMEOUT_MS`                   | `src/jeb/JebMcpConnection.ts`               | 60000 (MCP SDK default) |     1 | 2147483647 | captured when the JEB connection is created; applied to discovery and each tools/call | prose                                                                         |
-| `REA_KUNA_PROJECT_TIMEOUT_MS`              | `src/kuna/KunaConfiguration.ts`             |                 1800000 |     1 | 2147483647 | project export and whole-program scans, from the launch configuration                 | prose                                                                         |
-| `REA_KUNA_TIMEOUT_MS`                      | `src/kuna/KunaConfiguration.ts`             |                  120000 |     1 | 2147483647 | each function decompile, from the launch configuration                                | prose                                                                         |
-| `REA_PWNTOOLS_MAX_INPUT_BYTES`             | `src/native/pwntools/PwntoolsInputLimit.ts` |                33554432 |     1 | 1073741824 | each pwntools decode, unless the call passes `producer_limits.input_bytes`            | prose                                                                         |
-| `REA_WINDOWS_CHANGE_TIME_DRIFT_MS`         | `src/config/windowsChangeTimeSettle.ts`     |                    2000 |     1 |      60000 | each ChangeTime observation                                                           | `effect: "next_process"` (`restartRequired: true`) on an invalid launch value |
-| `REA_WINDOWS_CHANGE_TIME_SETTLE_POLL_MS`   | `src/config/windowsChangeTimeSettle.ts`     |                      25 |     1 |       1000 | each ChangeTime observation                                                           | `effect: "next_process"` (`restartRequired: true`) on an invalid launch value |
-| `REA_WINDOWS_CHANGE_TIME_SETTLE_MAX_POLLS` | `src/config/windowsChangeTimeSettle.ts`     |                      40 |     1 |       1000 | each ChangeTime observation                                                           | `effect: "next_process"` (`restartRequired: true`) on an invalid launch value |
+| Environment                                | Owner                                       |                 Default | Floor |    Maximum | Applies                                                                                                      | Effect                                                                        |
+| ------------------------------------------ | ------------------------------------------- | ----------------------: | ----: | ---------: | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `REA_BRIDGE_MAX_REQUEST_BYTES`             | `src/config/bridgeMaxRequestBytes.ts`       |                16777216 |  7464 |  536870887 | each bridge request, from the accepted operation snapshot                                                    | prose                                                                         |
+| `REA_DEBUGGER_COMMAND_DEADLINE_MS`         | `src/domain/analysisResourceLimits.ts`      |                  120000 |     1 | 2147483647 | each command, from the accepted operation snapshot                                                           | `effect: "immediate"` (`restart_required: false`)                             |
+| `REA_DEBUGGER_MAX_COMMAND_OUTPUT_BYTES`    | `src/domain/analysisResourceLimits.ts`      |                16777216 |     1 |   89303718 | each command, from the accepted operation snapshot                                                           | `effect: "immediate"` (`restart_required: false`)                             |
+| `REA_HOPPER_CALLER_SCAN_BUDGET_MS`         | `src/domain/analysisResourceLimits.ts`      |                    2000 |     1 | 2147483647 | each caller scan, from the accepted operation snapshot                                                       | prose                                                                         |
+| `REA_JEB_MCP_TIMEOUT_MS`                   | `src/jeb/JebMcpConnection.ts`               | 60000 (MCP SDK default) |     1 | 2147483647 | discovery and each tools/call, from the accepted operation snapshot                                          | prose                                                                         |
+| `REA_KUNA_PROJECT_TIMEOUT_MS`              | `src/kuna/KunaConfiguration.ts`             |                 1800000 |     1 | 2147483647 | each project export and whole-program scan, from the accepted operation snapshot                             | prose                                                                         |
+| `REA_KUNA_TIMEOUT_MS`                      | `src/kuna/KunaConfiguration.ts`             |                  120000 |     1 | 2147483647 | each function decompile, from the accepted operation snapshot                                                | prose                                                                         |
+| `REA_PWNTOOLS_MAX_INPUT_BYTES`             | `src/native/pwntools/PwntoolsInputLimit.ts` |                33554432 |     1 | 1073741824 | each pwntools decode, unless the call passes `producer_limits.input_bytes`; otherwise the operation snapshot | prose                                                                         |
+| `REA_WINDOWS_CHANGE_TIME_DRIFT_MS`         | `src/config/windowsChangeTimeSettle.ts`     |                    2000 |     1 |      60000 | each ChangeTime observation, from the accepted operation snapshot                                            | `effect: "next_process"` (`restartRequired: true`) on an invalid launch value |
+| `REA_WINDOWS_CHANGE_TIME_SETTLE_POLL_MS`   | `src/config/windowsChangeTimeSettle.ts`     |                      25 |     1 |       1000 | each ChangeTime observation, from the accepted operation snapshot                                            | `effect: "next_process"` (`restartRequired: true`) on an invalid launch value |
+| `REA_WINDOWS_CHANGE_TIME_SETTLE_MAX_POLLS` | `src/config/windowsChangeTimeSettle.ts`     |                      40 |     1 |       1000 | each ChangeTime observation, from the accepted operation snapshot                                            | `effect: "next_process"` (`restartRequired: true`) on an invalid launch value |
 
 ## Restart-only numeric limits
 
@@ -221,6 +221,5 @@ control-reply budget stays separate from
 `scripts/verify/rea-numeric-limits.mjs`. The check scans `src` excluding tests,
 keeps names that are numeric limits, and requires each name to be an
 `environment` on an analysis setting or a registry entry with a reason.
-`policy: "per-call"` is temporary. The migration that moves the limit deletes
-the entry and rejects any new `per-call` policy so the durable exceptions are
-only `restart-only`.
+The registry accepts only `restart-only`. A limit checked on each call has to
+be an analysis setting. The check rejects a `per-call` registry entry.
