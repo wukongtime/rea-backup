@@ -5,12 +5,13 @@ from this revision of `src`. A numeric `REA_` limit is a name under `src` (tests
 excluded) that carries a byte, time, count, heap, budget, deadline, or maximum.
 `scripts/verify/rea-numeric-limits.mjs` fails the static checks when one of those
 names is neither an environment seed of
-[`ANALYSIS_SETTINGS`](../../src/domain/analysisSettingDefinitions.ts) nor an
-entry in [`numericLimitRegistry.ts`](../../src/domain/numericLimitRegistry.ts)
+[`ANALYSIS_SETTINGS`](https://github.com/morluto/rea/blob/main/src/domain/analysisSettingDefinitions.ts) nor an
+entry in [`numericLimitRegistry.ts`](https://github.com/morluto/rea/blob/main/src/domain/numericLimitRegistry.ts)
 with a reason.
 
 `update_mode` is `runtime` when `update_analysis_settings` can change the active
-value, and `restart` when this process keeps the value it started with.
+value, `restart` when this process keeps the value it started with, and
+`parameter` when this call supplied the value.
 `pending_restart` is true only when a configured value is not the one this
 process is using. A rejected Windows ChangeTime launch value is not active, so
 that failure reports `pending_restart: true`. Every other value reported here
@@ -219,8 +220,10 @@ control-reply budget stays separate from
 
 ## Static check
 
-`npm run lint` and `scripts/verify/architecture-guards.mjs` run
-`scripts/verify/rea-numeric-limits.mjs`. The check scans `src` excluding tests,
+`npm run lint` runs `scripts/verify/rea-numeric-limits.mjs` after
+dependencies are installed. `scripts/verify/architecture-guards.mjs` runs the
+same check when `typescript6` is already installed; the pre-install CI step
+cannot. The check scans `src` excluding tests,
 keeps names that are numeric limits, and requires each name to be an
 `environment` on an analysis setting or a registry entry with a reason.
 The registry accepts only `restart-only`. A limit checked on each call has to
