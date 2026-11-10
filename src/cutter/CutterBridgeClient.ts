@@ -52,6 +52,8 @@ import {
   resolveBridgeMaxRequestBytes,
   type BridgeMaxRequestBytes,
 } from "../config/bridgeMaxRequestBytes.js";
+import { currentAnalysisOperationSnapshot } from "../domain/analysisOperationSnapshot.js";
+import type { AnalysisSettingsReader } from "../domain/analysisSettings.js";
 
 const descriptorSchema = z.object({
   ...cutterSessionSchema.shape,
@@ -254,11 +256,14 @@ export interface WindowsCutterDescriptorReader {
 interface CutterBridgeClientOptions {
   readonly platform?: NodeJS.Platform;
   readonly windowsPrivateReader?: WindowsCutterDescriptorReader;
+  /** Accepted runtime overrides. The operation snapshot wins when one is bound. */
+  readonly read?: AnalysisSettingsReader;
 }
 
 /** Discovers and communicates with REA Python bridge plugins in live Cutter processes. */
 export class CutterBridgeClient {
-  readonly #maxRequestBytes: BridgeMaxRequestBytes;
+  readonly #launchRequestBytes: BridgeMaxRequestBytes;
+  readonly #read: AnalysisSettingsReader | undefined;
   readonly #directory: string;
   readonly #descriptorResources = new ArtifactResourceScope();
   readonly #platform: NodeJS.Platform;
@@ -269,7 +274,8 @@ export class CutterBridgeClient {
     environment: Readonly<NodeJS.ProcessEnv> = process.env,
     options: CutterBridgeClientOptions = {},
   ) {
-    this.#maxRequestBytes = resolveBridgeMaxRequestBytes(environment);
+    this.#launchRequestBytes = resolveBridgeMaxRequestBytes(environment);
+    this.#read = options.read;
     const configured = environment.REA_CUTTER_BRIDGE_DIR;
     const localAppData = environment.LOCALAPPDATA;
     this.#platform = options.platform ?? process.platform;
@@ -303,6 +309,18 @@ export class CutterBridgeClient {
       localAppData,
       homeDirectoryFromEnvironment(environment, this.#platform),
     );
+  }
+
+  /** Ceiling for this call. A bound operation keeps the value it accepted. */
+  #requestLimit(): BridgeMaxRequestBytes {
+    const snapshot = currentAnalysisOperationSnapshot();
+    const override =
+      snapshot === undefined
+        ? this.#read?.().overrides["bridge.max_request_bytes"]
+        : snapshot.overrides["bridge.max_request_bytes"];
+    return override === undefined
+      ? this.#launchRequestBytes
+      : { maximumBytes: override, source: "runtime" };
   }
 
   async retryDescriptorCleanup(): Promise<void> {
@@ -340,7 +358,7 @@ export class CutterBridgeClient {
         assertBridgeActive(signal, "list_cutter_sessions");
         const advertised =
           descriptor.max_request_bytes ?? DEFAULT_BRIDGE_MAX_REQUEST_BYTES;
-        if (advertised !== this.#maxRequestBytes.maximumBytes) {
+        if (advertised !== this.#requestLimit().maximumBytes) {
           // A crashed process can leave the previous ceiling on disk. Count
           // the mismatch only after the hello proves a live authenticated
           // bridge. The probe does not send a status request.
@@ -352,7 +370,7 @@ export class CutterBridgeClient {
           const status = responseSchema.safeParse(
             await this.#request(
               descriptor,
-              serializeRequest(this.#maxRequestBytes, descriptor, {
+              serializeRequest(this.#requestLimit(), descriptor, {
                 kind: "status",
                 session_id: descriptor.session_id,
               }),
@@ -409,7 +427,7 @@ export class CutterBridgeClient {
     if (mismatches.length > 0)
       throw bridgeRequestLimitMismatchError(
         "list_cutter_sessions",
-        this.#maxRequestBytes,
+        this.#requestLimit(),
         mismatches[0] ?? DEFAULT_BRIDGE_MAX_REQUEST_BYTES,
         "Cutter",
         "No status request was sent to the mismatched session.",
@@ -436,16 +454,16 @@ export class CutterBridgeClient {
       assertBridgeActive(input.signal, "cutter_command");
       const advertised =
         descriptor.max_request_bytes ?? DEFAULT_BRIDGE_MAX_REQUEST_BYTES;
-      if (advertised !== this.#maxRequestBytes.maximumBytes)
+      if (advertised !== this.#requestLimit().maximumBytes)
         throw bridgeRequestLimitMismatchError(
           "cutter_command",
-          this.#maxRequestBytes,
+          this.#requestLimit(),
           advertised,
           "Cutter",
         );
       const requestId = randomUUID();
       const commandRequest = serializeRequest(
-        this.#maxRequestBytes,
+        this.#requestLimit(),
         descriptor,
         {
           kind: "command",
@@ -632,7 +650,7 @@ export class CutterBridgeClient {
   ): Promise<z.infer<typeof responseSchema>> {
     const raw = await this.#request(
       descriptor,
-      serializeRequest(this.#maxRequestBytes, descriptor, {
+      serializeRequest(this.#requestLimit(), descriptor, {
         kind: "status",
         session_id: descriptor.session_id,
       }),
@@ -681,7 +699,7 @@ export class CutterBridgeClient {
     try {
       const raw = await this.#request(
         descriptor,
-        serializeRequest(this.#maxRequestBytes, descriptor, {
+        serializeRequest(this.#requestLimit(), descriptor, {
           kind: "ack",
           request_id: requestId,
         }),
@@ -962,7 +980,7 @@ export class CutterBridgeClient {
         host: descriptor.host,
         port: descriptor.port,
       });
-      const frames = new CutterBridgeResponseFrames(this.#maxRequestBytes);
+      const frames = new CutterBridgeResponseFrames(this.#requestLimit());
       let settled = false;
       const settle = (
         outcome:
@@ -1037,7 +1055,7 @@ export class CutterBridgeClient {
         host: descriptor.host,
         port: descriptor.port,
       });
-      const frames = new CutterBridgeResponseFrames(this.#maxRequestBytes);
+      const frames = new CutterBridgeResponseFrames(this.#requestLimit());
       let completion: (() => void) | undefined;
       let requestSent = false;
       let authenticated = false;
