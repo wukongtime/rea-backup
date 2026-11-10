@@ -13,6 +13,7 @@
  */
 export interface NumericLimitRegistryEntry {
   readonly name: string;
+  readonly update_mode: "restart";
   readonly policy: "restart-only";
   readonly read: "startup";
   readonly reason: string;
@@ -21,6 +22,7 @@ export interface NumericLimitRegistryEntry {
 export const NUMERIC_LIMIT_REGISTRY = [
   {
     name: "REA_DEBUGGER_MAX_PENDING_COMMANDS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -28,6 +30,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_DEBUGGER_MAX_SESSIONS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -35,6 +38,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_HOPPER_DEMO_DIALOG_TIMEOUT_MS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -42,6 +46,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_JADX_ACTIVE_PROCESSOR_COUNT",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -49,6 +54,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_JADX_HEAP_MIB",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -56,6 +62,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_KUNA_CACHE_MAX_BYTES",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -63,6 +70,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_KUNA_JOBS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -70,6 +78,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_MCP_DOCTOR_DEADLINE_MS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -77,6 +86,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_MCP_FIRST_CATALOG_BUDGET_MS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -84,6 +94,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_MCP_INITIALIZE_BUDGET_MS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -91,6 +102,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_MCP_MAX_INPUT_ELEMENTS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -98,6 +110,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_MCP_MAX_RESPONSE_BYTES",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -105,6 +118,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_MCP_TOOLS_LIST_BUDGET_MS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -112,6 +126,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_RECONNECT_TIMEOUT_SECONDS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:
@@ -119,6 +134,7 @@ export const NUMERIC_LIMIT_REGISTRY = [
   },
   {
     name: "REA_SWIFTC_COMPILE_TIMEOUT_MS",
+    update_mode: "restart",
     policy: "restart-only",
     read: "startup",
     reason:

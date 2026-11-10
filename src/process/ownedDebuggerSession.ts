@@ -43,7 +43,7 @@ export const debuggerAdmissionDiagnostics = (
   admission: DebuggerAdmissionLimit,
 ) => {
   const analysisSetting = runtimeDebuggerSetting(admission);
-  const effect = analysisSetting === undefined ? "next_process" : "immediate";
+  const update_mode = analysisSetting === undefined ? "restart" : "runtime";
   return {
     setting: admission.setting,
     effective_value: admission.value,
@@ -52,8 +52,8 @@ export const debuggerAdmissionDiagnostics = (
     minimum: admission.minimum,
     maximum: admission.maximum,
     unit: admission.unit,
-    effect,
-    restart_required: effect === "next_process",
+    update_mode,
+    pending_restart: false as const,
     ...(analysisSetting === undefined
       ? {}
       : { analysis_setting: analysisSetting }),
@@ -70,7 +70,7 @@ export const debuggerAdmissionRecovery = (
       ? admission.setting
       : `${facts.analysis_setting} (launch seed ${admission.setting})`;
   const change =
-    facts.effect === "immediate"
+    facts.update_mode === "runtime"
       ? `It can be changed at runtime with update_analysis_settings.`
       : `Set ${admission.setting} in the environment that starts REA to a positive decimal integer from ${String(admission.minimum)} to ${String(admission.maximum)}, then restart REA.`;
   return `The effective ${identity} value is ${String(admission.value)} ${admission.unit} (source ${admission.source}; default ${String(admission.defaultValue)} ${admission.unit}, floor ${String(admission.minimum)} ${admission.unit}, maximum ${String(admission.maximum)} ${admission.unit}). ${change}`;
