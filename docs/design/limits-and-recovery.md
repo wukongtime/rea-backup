@@ -131,12 +131,13 @@ Windows ChangeTime admission waits out a fresh timestamp before recording a
 baseline. `REA_WINDOWS_CHANGE_TIME_DRIFT_MS` (default 2000 ms, floor 1 ms,
 maximum 60000 ms), `REA_WINDOWS_CHANGE_TIME_SETTLE_POLL_MS` (default 25 ms,
 floor 1 ms, maximum 1000 ms), and `REA_WINDOWS_CHANGE_TIME_SETTLE_MAX_POLLS`
-(default 40, floor 1, maximum 1000) are launch settings. Unset keeps those
-defaults. An invalid value is a configuration error: it names the setting, the
-rejected value, source `setting`, the default, the floor, and the maximum, and
-says to set a positive decimal integer in the environment that starts REA and
-then restart REA. There is no runtime override. Setup forwards an explicit
-selection. When the poll budget runs out, admission keeps the last observation
+(default 40, floor 1, maximum 1000) are runtime settings. Unset keeps those
+defaults. An invalid launch value is a configuration error: it names the
+setting, the rejected value, source `setting`, the default, the floor, the
+maximum, `update_mode: "runtime"`, and `pending_restart: true`. Change the
+active value with `update_analysis_settings`. The launch seed must be a
+positive decimal integer in that range. Setup forwards an explicit selection.
+When the poll budget runs out, admission keeps the last observation
 instead of failing the readable file. Raising a setting only changes how long
 that wait can last. It does not change Windows ChangeTime itself.
 
@@ -257,8 +258,8 @@ are runtime-wide, not scoped to a target or an individual connection.
 ### Failure and retry
 
 An ASAR admission error supplies `details.limit` with the exact setting,
-effective value, units, bounds, scope, application point, restart requirement
-and, when known, required bytes and value source. The agent can immediately call:
+effective value, units, bounds, scope, application point, `update_mode`,
+`pending_restart` and, when known, required bytes and value source. The agent can immediately call:
 
 ```json
 {
@@ -284,6 +285,14 @@ or applicable. Do not infer a source because a value happens to equal a default.
 Error copying, attribution, redaction, and delivery must preserve these facts.
 Human-readable remediation explains the same failure; clients should not need
 to parse that sentence to identify an editable setting.
+
+This output is breaking. Results and errors no longer carry the previous
+restart boolean or a single effect field, and there is no compatibility alias.
+Read `update_mode` to see whether the setter can change the active value, and
+`pending_restart` to see whether a configured value is waiting. A configuration
+error for a Windows ChangeTime setting carries those two fields on
+`details.settings`, not only in the constraint sentence. The removed field names
+are listed in the changelog.
 
 `scope` and `applies_at` describe a continuing caller, such as an MCP
 connection. A one-shot invocation, such as a CLI command, has released its
