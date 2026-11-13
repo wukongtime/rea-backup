@@ -1,5 +1,36 @@
 # Changelog
 
+## [6.10.0](https://github.com/wukongtime/rea-backup/compare/rea-agents-6.9.0...rea-agents-6.10.0) (2026-11-13)
+
+
+### Features
+
+* **setup:** expose explicit MCP catalog profile selection ([#9354](https://github.com/wukongtime/rea-backup/issues/9354)) ([edc9304](https://github.com/wukongtime/rea-backup/commit/edc93046692c120567553fb68390db6ec5bc98c7))
+
+
+### Bug Fixes
+
+* **android:** enforce DEX array dimension limit ([#10227](https://github.com/wukongtime/rea-backup/issues/10227)) ([966bde3](https://github.com/wukongtime/rea-backup/commit/966bde37806d1d16a7028037da264f33065c65d0))
+* **android:** preserve SDK-gated manifest permissions ([#10236](https://github.com/wukongtime/rea-backup/issues/10236)) ([4d15b7f](https://github.com/wukongtime/rea-backup/commit/4d15b7f50957e0870ddd05fbdf794b3bb1e45cfa))
+* **apple:** expand loaded siblings along the first dyld chain ([#10248](https://github.com/wukongtime/rea-backup/issues/10248)) ([9d32836](https://github.com/wukongtime/rea-backup/commit/9d32836d371718260a9fcd1118f2e635cc1005e6))
+* **ci:** defer proposals for merged release commits ([5eef239](https://github.com/wukongtime/rea-backup/commit/5eef239dfd774331d622aaa4762f42fa632121ab))
+* **contracts:** drop nested defaults from a root union sibling ([#10254](https://github.com/wukongtime/rea-backup/issues/10254)) ([7559e06](https://github.com/wukongtime/rea-backup/commit/7559e06740368363e7270ffcfbb8d3d5d641fe25))
+* **desktop:** expand ELF origin paths as literal directory names ([c19d319](https://github.com/wukongtime/rea-backup/commit/c19d319929cedb74f9d50138c415919197ef3acd))
+* **desktop:** preserve literal directories in ELF origin expansion ([#10215](https://github.com/wukongtime/rea-backup/issues/10215)) ([c19d319](https://github.com/wukongtime/rea-backup/commit/c19d319929cedb74f9d50138c415919197ef3acd))
+* **desktop:** preserve multiline apt-config locations ([#10241](https://github.com/wukongtime/rea-backup/issues/10241)) ([0f5ac9d](https://github.com/wukongtime/rea-backup/commit/0f5ac9d5f3d750e017456fa5e9b9f955f497a8b1))
+* **desktop:** preserve Unicode separators in entry values ([#10210](https://github.com/wukongtime/rea-backup/issues/10210)) ([594d739](https://github.com/wukongtime/rea-backup/commit/594d73985c9d631e52ad644848fe825d5dffa119))
+* **desktop:** validate guest file replies at their shared boundary ([#10224](https://github.com/wukongtime/rea-backup/issues/10224)) ([50d4f7b](https://github.com/wukongtime/rea-backup/commit/50d4f7bea42d171a839e1dd76d191209816da4de))
+* **mcp:** record deferred schemas before protocol framing ([#9351](https://github.com/wukongtime/rea-backup/issues/9351)) ([bed3f0b](https://github.com/wukongtime/rea-backup/commit/bed3f0bcb5518bd8e086d95f5a9bab3bd064c096))
+* **pe:** enforce DER extension critical encoding ([#10212](https://github.com/wukongtime/rea-backup/issues/10212)) ([937d10d](https://github.com/wukongtime/rea-backup/commit/937d10df1c709c8b2f5af8d9406ef735d0b3a2dc))
+* **release:** honor selected npm in update verification ([#10240](https://github.com/wukongtime/rea-backup/issues/10240)) ([418e3f5](https://github.com/wukongtime/rea-backup/commit/418e3f5e91f43d05412935aa36db7e4f61b3f6ff))
+* **release:** validate notes with the publication parser ([653c494](https://github.com/wukongtime/rea-backup/commit/653c49419e65515d5567ebf13c0e6dd2ac794f7e))
+* **setup:** supply registration profile in catalog test ([a8527d4](https://github.com/wukongtime/rea-backup/commit/a8527d43b8439476f5c9d1497315dfe7dd5e1f38))
+
+
+### Code Refactoring
+
+* prune test-only seams and obsolete helpers ([#10275](https://github.com/wukongtime/rea-backup/issues/10275)) ([02ebd3e](https://github.com/wukongtime/rea-backup/commit/02ebd3e02da3971701c0c61ef787bacd7595f9a8))
+
 ## [6.9.0](https://github.com/morluto/rea/compare/rea-agents-6.8.0...rea-agents-6.9.0) (2026-11-11)
 
 ### Highlights
