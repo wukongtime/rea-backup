@@ -851,17 +851,22 @@ const uleb = (
   rebaseWork?: { workRemaining: number },
 ): bigint => {
   const start = cursor.at;
-  const read = readLeb128(bytes, start, end, MACHO_ULEB);
+  // A rebase operand reads no further than its remaining work allows, so a
+  // padded operand cannot be rescanned past the budget by a later stream.
+  const bound =
+    rebaseWork === undefined
+      ? end
+      : Math.min(end, start + rebaseWork.workRemaining);
+  const read = readLeb128(bytes, start, bound, MACHO_ULEB);
+  cursor.at = consumedEnd(read);
   if (rebaseWork !== undefined) {
-    // Each byte is charged before it is read, after the truncation check.
-    const charged = consumedEnd(read) - start;
-    if (charged > rebaseWork.workRemaining)
+    // Each byte read is charged, including those of a failed operand.
+    rebaseWork.workRemaining -= cursor.at - start;
+    if ("failure" in read && read.failure === "truncated" && read.at < end)
       throw new RangeError(
         "Legacy rebase parsing exceeded the source-derived work budget",
       );
-    rebaseWork.workRemaining -= charged;
   }
-  cursor.at = consumedEnd(read);
   if ("failure" in read)
     throw new RangeError(
       read.failure === "truncated"
