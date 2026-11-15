@@ -1,5 +1,5 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { chmod, mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 import { parseClientConfiguration } from "../../../src/application/ClientConfigurationDocument.js";
@@ -37,6 +37,7 @@ it.each([
   { agent: "zed", client: "zed" },
   { agent: "amp", client: "amp" },
   { agent: "mcporter", client: "mcporter" },
+  { agent: "fx", client: "fx" },
 ])(
   "inspects, refreshes and removes the $agent registration that mcp add wrote as $client",
   async ({ agent, client }) => {
@@ -112,6 +113,8 @@ it.each([
       row.format,
     );
     expect(remaining.servers).not.toHaveProperty("rea");
+    if (row.privateProfile === true && platform !== "win32")
+      expect((await stat(row.configPath)).mode & 0o777).toBe(0o600);
   },
 );
 
@@ -145,3 +148,36 @@ it("keeps MCPorter out of setup detection and doctor until REA registers it", as
     state: "missing",
   });
 });
+
+it.skipIf(platform === "win32")(
+  "setup publishes fx's profile privately and repairs its modes",
+  async () => {
+    const home = await createTestTempDirectory("rea-fx-private-");
+    const row = supportedClients(home, platform, {}).find(
+      ({ name }) => name === "fx",
+    );
+    if (row === undefined) throw new Error("fx has no table row");
+    const modes = async () => ({
+      directory: (await stat(dirname(row.configPath))).mode & 0o777,
+      file: (await stat(row.configPath)).mode & 0o777,
+    });
+    await expect(
+      configureClientConfiguration(row, {}, command),
+    ).resolves.toMatchObject({ status: "configured" });
+    expect(await modes()).toEqual({ directory: 0o700, file: 0o600 });
+    await expect(inspectClientConfiguration(row, {}, command)).resolves.toEqual(
+      { status: "already_current" },
+    );
+
+    // A current row in a readable profile still needs its modes restored.
+    await chmod(row.configPath, 0o644);
+    await chmod(dirname(row.configPath), 0o755);
+    await expect(
+      inspectClientConfiguration(row, {}, command),
+    ).resolves.toMatchObject({ status: "update" });
+    await expect(
+      configureClientConfiguration(row, {}, command),
+    ).resolves.toMatchObject({ status: "configured" });
+    expect(await modes()).toEqual({ directory: 0o700, file: 0o600 });
+  },
+);

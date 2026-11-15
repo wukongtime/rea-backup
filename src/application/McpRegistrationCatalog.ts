@@ -34,7 +34,6 @@ import {
   fromSetup,
   present,
   fixedProjectLocation,
-  fxLocation,
   gooseLocation,
   junieLocation,
   type McpRegistrationLocationContext,
@@ -104,26 +103,7 @@ export const MCP_REGISTRATION_CLIENTS = {
   codex: tableClient("codex"),
   cursor: tableClient("cursor"),
   "factory-droid": tableClient("droid"),
-  fx: {
-    kind: "registration-only",
-    displayName: "fx",
-    format: "fx",
-    globalLocation: fxLocation,
-    registrationConnection: {
-      kind: "flat",
-      fields: ["url", "args"],
-      stdio: [
-        { kind: "optional-enum", field: "type", values: ["local", "stdio"] },
-        {
-          kind: "all",
-          conditions: [
-            { kind: "missing", field: "type" },
-            { kind: "present", field: "url" },
-          ],
-        },
-      ],
-    },
-  },
+  fx: tableClient("fx"),
   "gemini-cli": tableClient("gemini_cli"),
   goose: {
     kind: "registration-only",
@@ -328,7 +308,7 @@ const globalTarget = async (
       ...(resolved.inlineConfiguration === undefined
         ? {}
         : { inlineConfiguration: resolved.inlineConfiguration }),
-      ...(id === "fx" ? { privateProfile: true } : {}),
+      ...(setupClient?.privateProfile === true ? { privateProfile: true } : {}),
       ...(setupClient === undefined ? {} : { setupClient }),
     },
     markers: resolved.markers.map((marker) => selectedPath(marker, context)),
