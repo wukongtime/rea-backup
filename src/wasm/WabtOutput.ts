@@ -1,4 +1,5 @@
 import { WabtAdmissionError } from "./WabtAdmissionError.js";
+import { isStrictUtf8 } from "../domain/strictUtf8.js";
 
 /** WABT prints names with %.*s, so an embedded NUL ends their display. */
 const wabtDisplayedName = (name: string | undefined): string | undefined =>
@@ -109,14 +110,9 @@ const invalidCustomNameEnd = (
     if ((byte & 0x80) !== 0) continue;
     const nameEnd = position + length;
     if (nameEnd > end) return undefined;
-    try {
-      new TextDecoder("utf-8", { fatal: true }).decode(
-        bytes.subarray(position, nameEnd),
-      );
-      return undefined;
-    } catch {
-      return nameEnd;
-    }
+    return isStrictUtf8(bytes.subarray(position, nameEnd))
+      ? undefined
+      : nameEnd;
   }
   return undefined;
 };
