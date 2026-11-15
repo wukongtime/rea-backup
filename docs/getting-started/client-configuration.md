@@ -842,7 +842,10 @@ other editors that host it is not inspected. A same-named server in a Kiro,
 Mastra Code, Zed or Amp project file overrides the user registration; doctor
 reports the user file. Mastra Code keeps enabled state outside `mcp.json`, and
 Amp's managed settings and `amp.mcpPermissions` can block a server; doctor
-cannot observe either. Zed's comments and formatting are preserved. These
+cannot observe either. On Linux, `FLATPAK_XDG_CONFIG_HOME` selects Zed's folder as Zed itself does,
+and a Flathub Zed's `~/.var/app/dev.zed.Zed/config/zed` is used when only that
+folder exists; with both it and the native folder present, REA cannot tell which
+Zed you use and refuses. Zed's comments and formatting are preserved. These
 locations follow each client's documentation and source; no installed client
 was run to verify loading.
 
