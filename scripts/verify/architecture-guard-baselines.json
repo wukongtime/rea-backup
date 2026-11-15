@@ -401,5 +401,6 @@
     "src/pcap/PcapDnsWire.ts": 5,
     "src/python/PythonPycParser.ts": 9,
     "src/v8/V8CodeCacheParser.ts": 1
-  }
+  },
+  "macho-load-command-literal": {}
 }
