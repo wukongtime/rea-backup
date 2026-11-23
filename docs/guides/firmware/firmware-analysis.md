@@ -53,7 +53,39 @@ rea extract-uefi-firmware /path/to/flash.bin /path/to/new-output \
 ```
 
 Use `inspect_uefi_firmware` and `inspect_uefi_nvram` from MCP with
-`{"path":"/path/to/flash.bin"}`. To extract a mapped flash-backed volume:
+`{"path":"/path/to/flash.bin"}`. A complete UEFI map of a 4 MiB OVMF image is
+about 500 KB, so MCP `inspect_uefi_firmware` defaults to `detail: "summary"`.
+It retains the complete map in the session and returns volume, file and
+section counts with type tallies. Select rows with a `uefi-firmware` view, in
+the same call or later through `inspect_analysis_view` with
+`normalized_result.parent_evidence_id`:
+
+```json
+{
+  "name": "inspect_uefi_firmware",
+  "arguments": {
+    "path": "/path/to/flash.bin",
+    "view": {
+      "kind": "uefi-firmware",
+      "collection": "files",
+      "ui_names": ["PlatformDxe"]
+    }
+  }
+}
+```
+
+Collections are `volumes`, `files`, `sections`, `unknown-regions`,
+`integrity`, `psp-tables` and `psp-candidates`, paged with `offset` and
+`limit`. Files match exact `guids`, `ui_names`, `type_names` and
+`volume_path`. Each file row lists its sections with type, offset, length,
+SHA-256 and `source_stream`, which `extract_uefi_firmware` targets. The
+`sections` collection returns complete section records and matches an exact
+`file_path` and `type_names`. An empty page reports only the retained
+rows; parser limits and coverage remain in the summary. Pass
+`detail: "complete"` to receive every record inline. The CLI command always
+returns complete Evidence.
+
+To extract a mapped flash-backed volume:
 
 ```json
 {
